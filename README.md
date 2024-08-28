@@ -1,3 +1,10 @@
+```
+git clone https://github.com/guswns531/Montage.git
+cd Montage/
+git checkout tags/v6.1
+git branch debug-v6.1
+git checkout debug-v6.1
+```
 
 Montage: Astronomical Image Mosaics, Examination, and Visualization
 ===================================================================
