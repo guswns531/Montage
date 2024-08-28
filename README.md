@@ -1,11 +1,29 @@
-```
+```bash
 git clone https://github.com/guswns531/Montage.git
 cd Montage/
 git checkout tags/v6.1
 git branch debug-v6.1
 git checkout debug-v6.1
-```
+git add .
+git commit -m "Start Debug Montage-v6.1"
+git push --set-upstream origin debug-v6.1
 
+sh Python_ManyLinux/startDocker.sh
+```
+In Docker
+```bash
+cd /build/Montage/
+
+./Python_ManyLinux/configureDocker.sh
+make
+
+export PATH=/build/Montage/bin:$PATH
+
+cd python/MontagePy
+
+
+./make_manylinux.sh
+```
 Montage: Astronomical Image Mosaics, Examination, and Visualization
 ===================================================================
 
