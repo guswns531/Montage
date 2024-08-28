@@ -1,29 +1,133 @@
+# Montage v6.1 Debug Setup for Python 3.8
+
+This guide will walk you through setting up and debugging Montage v6.1 specifically for Python 3.8 using Docker.
+
+## Prerequisites
+
+- Docker installed on your system.
+- Basic knowledge of git and Python package management.
+
+## Step 1: Clone the Montage Repository
+
+Begin by cloning the Montage repository from GitHub:
+
 ```bash
 git clone https://github.com/guswns531/Montage.git
 cd Montage/
+```
+
+## Step 2: Checkout the Specific Version (v6.1)
+
+Checkout the version `v6.1` and create a new branch for debugging:
+
+```bash
 git checkout tags/v6.1
 git branch debug-v6.1
 git checkout debug-v6.1
+```
+
+## Step 3: Start the Debugging Process
+
+Add all changes and commit them to the new branch:
+
+```bash
 git add .
 git commit -m "Start Debug Montage-v6.1"
 git push --set-upstream origin debug-v6.1
+```
 
+## Step 4: Start the Docker Environment
+
+Run the following script to start the Docker environment:
+
+```bash
 sh Python_ManyLinux/startDocker.sh
 ```
-In Docker
+
+## Step 5: Setting Up in Docker for Python 3.8
+
+Once inside Docker, navigate to the Montage build directory:
+
 ```bash
 cd /build/Montage/
-
-./Python_ManyLinux/configureDocker.sh
-make
-
-export PATH=/build/Montage/bin:$PATH
-
-cd python/MontagePy
-
-
-./make_manylinux.sh
 ```
+
+### Step 5.1: Install Required Python Packages
+
+Install the necessary Python packages:
+
+```bash
+/opt/python/cp38-cp38/bin/pip install Cython==0.29.24
+/opt/python/cp38-cp38/bin/pip install jinja2
+```
+
+### Step 5.2: Build the Project
+
+Run the `make` command to build the project:
+
+```bash
+make
+```
+
+### Step 5.3: Clean Previous Builds (Optional)
+
+Remove any previous build artifacts:
+
+```bash
+rm -rf wheelhouse dist
+rm -rf MontagePy.egg-info build dist MontagePy/__pycache__
+```
+
+### Step 5.4: Parse the Python Script
+
+Run the following command to parse the `parse.py` script:
+
+```bash
+/opt/python/cp38-cp38/bin/python parse.py
+```
+
+### Step 5.5: Modify the `_wrappers.pyx` File
+
+Use the following `sed` command to modify the `_wrappers.pyx` file:
+
+```bash
+sed '/^def mViewer/a \ \ \ \ # Next four lines added by sed script\n    import pkg_resources\n\n    if fontFile == "":\n        fontFile = pkg_resources.resource_filename("MontagePy", "FreeSans.ttf")' MontagePy/_wrappers.pyx > MontagePy/tmpfile
+
+mv MontagePy/tmpfile MontagePy/_wrappers.pyx
+```
+
+### Step 5.6: Build and Package the Python Wheel
+
+Build the project and create a Python wheel:
+
+```bash
+/opt/python/cp38-cp38/bin/python setup_manylinux.py build bdist_wheel
+```
+
+### Step 5.7: Repair and Move the Wheel
+
+Use `auditwheel` to repair the wheel and then move it to the distribution directory:
+
+```bash
+auditwheel repair dist/*.whl
+rm dist/*
+mv wheelhouse/* dist
+```
+
+### Step 5.8: Install the Final Package
+
+Finally, install the built package:
+
+```bash
+/opt/python/cp38-cp38/bin/pip install wheelhouse/MontagePy-1.2.3-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.whl
+```
+
+## Conclusion
+
+Following these steps will set up and debug Montage v6.1 for Python 3.8 within a Docker environment. Ensure you replace paths and version numbers according to your specific setup if they differ.
+
+---
+
 Montage: Astronomical Image Mosaics, Examination, and Visualization
 ===================================================================
 
