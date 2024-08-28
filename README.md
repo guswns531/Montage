@@ -12,7 +12,7 @@ This guide will walk you through setting up and debugging Montage v6.1 specifica
 Begin by cloning the Montage repository from GitHub:
 
 ```bash
-git clone https://github.com/guswns531/Montage.git
+git clone https://github.com/$GITID/Montage.git
 cd Montage/
 ```
 
